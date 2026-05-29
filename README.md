@@ -45,7 +45,7 @@ OTEL_RESOURCE_ATTRIBUTES="team=growth" OPENAI_API_KEY="" OPENAI_BASE_URL="" .ven
 ```
 
 This Python application integrates with OpenAI to generate random jokes and explain them. It expects `OPENAI_API_KEY`
-to be set for the integration to work. Application runs constantly, spending tokens and emitting telemetry. **Press Ctrl+C to stop it.**:
+to be set for the integration to work:
 ```sh
 OTEL_RESOURCE_ATTRIBUTES="team=growth" .venv/bin/python3 openlit-demo.py                                                                                     :(
 ------
@@ -53,6 +53,7 @@ The joke plays on the double meaning of "strong" by referring to the two weekend
 ------
 The joke "What kind of dinosaur loves to sleep? A stega-snore-us." is funny because it plays on the name of a well-known dinosaur, the stegosaurus, and cleverly combines it with the word "snore," which humorously suggests that the dinosaur is lazy or sleepy. The humor lies in the pun that transforms a scientific name into a playful and relatable trait—snoring—which we associate with people who are in a deep sleep. This blending of concepts creates an amusing image that catches the listener off guard.
 ```
+Application runs constantly, spending tokens and emitting telemetry. **Press Ctrl+C to stop it.**
 
 After a few minutes the application was running, it should have emitted telemetry to VictoriaStack.
 Open the Grafana and navigate to the [provisioned dashboard]():
