@@ -28,7 +28,7 @@
       }
     ],
     "cursorSync": "Crosshair",
-    "description": "Metrics, logs and traces emitted by the openlit_demo Python app — tool-calling demo with OpenAI + OpenLIT.",
+    "description": "Metrics, logs and traces emitted by the openlit_demo Python app.",
     "editable": true,
     "elements": {
       "panel-100": {
@@ -55,7 +55,7 @@
                       "spec": {
                         "editorMode": "code",
                         "exemplar": false,
-                        "expr": "sum(increase(gen_ai_client_operation_duration_seconds_count{telemetry_sdk_name=\"openlit\", service_name=~\"$service_name\", deployment_environment=~\"$deployment_environment\"}[$__range]))",
+                        "expr": "sum(increase(gen_ai_client_operation_duration_seconds_count{service_name=~\"$service_name\", deployment_environment=~\"$deployment_environment\"}[$__range]))",
                         "instant": false,
                         "legendFormat": "Requests",
                         "range": true
@@ -395,7 +395,7 @@
                       },
                       "spec": {
                         "editorMode": "code",
-                        "expr": "sum(increase(gen_ai_usage_cost_USD_sum{telemetry_sdk_name=\"openlit\", service_name=~\"$service_name\", deployment_environment=~\"$deployment_environment\"}[$__range]))",
+                        "expr": "sum(increase(gen_ai_usage_cost_USD_sum{service_name=~\"$service_name\", deployment_environment=~\"$deployment_environment\"}[$__range]))",
                         "instant": false,
                         "legendFormat": "Cost",
                         "range": true
@@ -1450,7 +1450,7 @@
                       },
                       "spec": {
                         "editorMode": "code",
-                        "expr": "sum(increase(gen_ai_usage_cost_USD_sum{telemetry_sdk_name=\"openlit\", service_name=~\"$service_name\", deployment_environment=~\"$deployment_environment\"}[5m]))",
+                        "expr": "sum(increase(gen_ai_usage_cost_USD_sum{service_name=~\"$service_name\", deployment_environment=~\"$deployment_environment\"}[5m]))",
                         "instant": false,
                         "legendFormat": "Cost",
                         "range": true

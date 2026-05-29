@@ -9,8 +9,8 @@ The demo consists of the following components:
 
 ![architecture.png](images/architecture.png)
 
-1. Python application that uses OpenAI integration for chat completions and [openlit SDK](https://github.com/openlit/openlit) 
-  for LLM observability.
+1. [Python application](https://github.com/hagen1778/ai-observability/blob/main/openlit-demo.py) that uses OpenAI integration
+   for chat completions and [openlit SDK](https://github.com/openlit/openlit) for LLM observability.
 2. Openlit SDK forwards collected telemetry to OpenTelemetry collector via HTTP.
 3. OpenTelemetry collector performs basic transofrmations, tail sampling, etc. and forwards telemetry to VictoriaStack.
 4. VictoriaStack is represented as:
@@ -18,9 +18,11 @@ The demo consists of the following components:
    - VictoriaLogs for logs
    - VictoriaTraces for traces
 5. Grafana provisioned with:
-   - datasources for metrics, logs and traces
-   - dashboard for AI observability
-6. vmalert for running basic alerting and recording rules against VictoriaMetrics.
+   - [datasources for metrics, logs and traces](https://github.com/hagen1778/ai-observability/tree/main/provisioning/datasources)
+   - [dashboard for AI observability](https://github.com/hagen1778/ai-observability/blob/main/provisioning/dashboards/openlit-demo.json)
+6. vmalert for running basic [alerting and recording rules](https://github.com/hagen1778/ai-observability/blob/main/rules/llm.yml) against VictoriaMetrics.
+
+See the [compose.yml](https://github.com/hagen1778/ai-observability/blob/main/compose.yml) for the full list of services.
 
 ## Quickstart
 
