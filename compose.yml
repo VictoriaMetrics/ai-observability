@@ -1,0 +1,45 @@
+services:
+  otelcol:
+    image: otel/opentelemetry-collector-contrib:0.152.0
+    command: ["--config=/etc/otelcol/config.yaml"]
+    volumes: ["./otelcol.yaml:/etc/otelcol/config.yaml"]
+    ports: ["4318:4318"]
+
+  victoriametrics:
+    image: victoriametrics/victoria-metrics:latest
+    command: ["-opentelemetry.usePrometheusNaming", "-vmalert.proxyURL=http://vmalert:8880"]
+    ports: ["8428:8428"]
+    volumes: ["vm-data:/victoria-metrics-data"]
+
+  victoriatraces:
+    image: victoriametrics/victoria-traces:latest
+    ports: ["10428:10428"]
+    volumes: ["vt-data:/victoria-traces-data"]
+
+  victorialogs:
+    image: victoriametrics/victoria-logs:latest
+    ports: ["9428:9428"]
+    volumes: ["vl-data:/victoria-logs-data"]
+
+  vmalert:
+    image: victoriametrics/vmalert:latest
+    command:
+      - "-datasource.url=http://victoriametrics:8428"
+      - "-remoteWrite.url=http://victoriametrics:8428"
+      - "-rule=/etc/vmalert/*.yml"
+      # Replace "-notifier.blackhole" with actual "-notifier.url=<alertmanager_url>"
+      - "-notifier.blackhole"
+    volumes: ["./rules:/etc/vmalert"]
+
+  grafana:
+    image: grafana/grafana:latest
+    ports: ["3000:3000"]
+    environment:
+      - GF_INSTALL_PLUGINS=victoriametrics-logs-datasource
+    volumes:
+      - grafanadata:/var/lib/grafana
+      - ./provisioning/datasources:/etc/grafana/provisioning/datasources
+      - ./provisioning/dashboards/dashboard.yml:/etc/grafana/provisioning/dashboards/dashboard.yml
+      - ./provisioning/dashboards/openlit-demo.json:/var/lib/grafana/dashboards/openlit-demo.json
+
+volumes: { vm-data: {}, vt-data: {}, vl-data: {}, grafanadata: {} }

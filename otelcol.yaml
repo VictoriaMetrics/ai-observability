@@ -1,0 +1,36 @@
+receivers:
+  otlp:
+    protocols:
+      http:
+        endpoint: 0.0.0.0:4318
+
+processors:
+  attributes/metrics:
+    actions:
+      - { key: gen_ai.conversation.id, action: delete }
+      - { key: gen_ai.response.id,     action: delete }
+      - { key: gen_ai.tool.call.id,    action: delete }
+      - { key: user.id,                action: delete }
+
+  tail_sampling:
+    decision_wait: 30s
+    policies:
+      - { name: errors,        type: status_code,        status_code: { status_codes: [ ERROR ] } }
+      - { name: expensive,     type: numeric_attribute,  numeric_attribute: { key: gen_ai.usage.cost, min_value: 0.1, max_value: 1000000 } }
+      - { name: slow-runs,     type: latency,            latency: { threshold_ms: 10000 } }
+      - { name: cheap-sample,  type: probabilistic,      probabilistic: { sampling_percentage: 5 } }
+
+  batch:
+    send_batch_size: 10000
+    timeout: 10s
+
+exporters:
+  otlp_http/vm-metrics: { metrics_endpoint: http://victoriametrics:8428/opentelemetry/v1/metrics }
+  otlp_http/vm-traces: { traces_endpoint: http://victoriatraces:10428/insert/opentelemetry/v1/traces }
+  otlp_http/vm-logs: { logs_endpoint: http://victorialogs:9428/insert/opentelemetry/v1/logs, headers: { VL-Msg-Field: gen_ai.input.messages } }
+
+service:
+  pipelines:
+    metrics: { receivers: [ otlp ], processors: [ attributes/metrics, batch ], exporters: [ otlp_http/vm-metrics ] }
+    traces: { receivers: [ otlp ], processors: [ tail_sampling, batch ],      exporters: [ otlp_http/vm-traces ] }
+    logs: { receivers: [ otlp ], processors: [ batch ],                     exporters: [ otlp_http/vm-logs ] }

@@ -1,0 +1,70 @@
+groups:
+  - name: ai-health
+    interval: 30s
+    rules:
+      - record: team:ai_usage_cost:1h
+        expr: sum by (team) (increase(gen_ai_usage_cost_USD_sum[1h]))
+
+      - alert: LLMCostRunaway
+        expr: team:ai_usage_cost:1h > 100   # $100/hr, set per-team
+        labels: { severity: critical, category: cost }
+        annotations:
+          summary: "Team {{ $labels.team }} burning ${{ $value | printf \"%.0f\" }}/hr"
+
+      - alert: ProviderErrorSpike
+        expr: |
+          sum by (gen_ai_provider_name) (
+            rate(gen_ai_client_operation_duration_seconds_count{error_type!=""}[5m])
+          )
+          /
+          sum by (gen_ai_provider_name) (
+            rate(gen_ai_client_operation_duration_seconds_count[5m])
+          ) > 0.05
+        for: 5m
+        labels: { severity: warning, category: provider }
+
+      - alert: RateLimitStorm
+        expr: |
+          sum by (gen_ai_provider_name) (
+            rate(gen_ai_client_operation_duration_seconds_count{error_type="rate_limited"}[1m])
+          ) > 10
+        for: 2m
+
+      - alert: TTFTRegression
+        expr: |
+          histogram_quantile(0.95, sum by (le, gen_ai_provider_name) (
+            rate(gen_ai_server_time_to_first_token_seconds_bucket[10m])))
+          /
+          histogram_quantile(0.95, sum by (le, gen_ai_provider_name) (
+            rate(gen_ai_server_time_to_first_token_seconds_bucket[10m] offset 1w)))
+          > 1.5
+        for: 30m
+        annotations:
+          summary: "{{ $labels.gen_ai_provider_name }} p95 TTFT 50%+ slower than last week"
+
+  - name: agents
+    rules:
+      - alert: AgentInfiniteLoop
+        expr: |
+          sum by (gen_ai_workflow_name) (
+            rate(gen_ai_client_operation_duration_seconds_count[5m])
+          ) > 100
+        for: 5m
+        labels: { severity: warning, category: agent }
+        annotations:
+          summary: "Workflow {{ $labels.gen_ai_workflow_name }} >100 tool calls/sec - likely recursion"
+
+      - alert: CacheHitRateDropped
+        expr: |
+          (sum(rate(gen_ai_client_token_usage_sum{gen_ai_token_type="cache_read"}[15m]))
+           / sum(rate(gen_ai_client_token_usage_sum{gen_ai_token_type="input"}[15m])))
+          < 0.3
+        for: 30m
+        labels: { severity: info, category: cost }
+
+      - alert: HallucinationRateClimbing
+        expr: |
+          avg_over_time(gen_ai_evaluation_score{evaluator="hallucination"}[1h])
+          >
+          avg_over_time(gen_ai_evaluation_score{evaluator="hallucination"}[7d] offset 1d) * 1.5
+        for: 1h
