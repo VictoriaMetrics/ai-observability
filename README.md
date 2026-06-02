@@ -56,7 +56,7 @@ The joke "What kind of dinosaur loves to sleep? A stega-snore-us." is funny beca
 Application runs constantly, spending tokens and emitting telemetry. **Press Ctrl+C to stop it.**
 
 After a few minutes the application was running, it should have emitted telemetry to VictoriaStack.
-Open the Grafana and navigate to the [provisioned dashboard]():
+Open the Grafana and navigate to the [provisioned dashboard](https://github.com/hagen1778/ai-observability/blob/main/provisioning/dashboards/openlit-demo.json):
 ![img.png](images/grafana-metrics.png)
 
 ![img.png](images/grafana-logs.png)
