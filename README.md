@@ -3,6 +3,8 @@
 This is a demo project to demonstrate how to monitor AI applications by emitting metrics, logs and traces via [Openlit SDK](https://github.com/openlit/openlit)
 via [OpenTelemetry collector and VictoriaStack](https://docs.victoriametrics.com/opentelemetry/).
 
+See also a [demo project for GPU observability](https://github.com/hagen1778/gpu-observability).
+
 ## Architecture
 
 The demo consists of the following components:
