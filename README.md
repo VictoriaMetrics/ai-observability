@@ -3,7 +3,7 @@
 This is a demo project to demonstrate how to monitor AI applications by emitting metrics, logs and traces via [Openlit SDK](https://github.com/openlit/openlit)
 via [OpenTelemetry collector and VictoriaStack](https://docs.victoriametrics.com/opentelemetry/).
 
-See also a [demo project for GPU observability](https://github.com/hagen1778/gpu-observability).
+See also a [demo project for GPU observability](https://github.com/VictoriaMetrics/gpu-observability).
 
 ## Architecture
 
@@ -11,7 +11,7 @@ The demo consists of the following components:
 
 ![architecture.png](images/architecture.png)
 
-1. [Python application](https://github.com/hagen1778/ai-observability/blob/main/openlit-demo.py) that uses OpenAI integration
+1. [Python application](https://github.com/VictoriaMetrics/ai-observability/blob/main/openlit-demo.py) that uses OpenAI integration
    for chat completions and [openlit SDK](https://github.com/openlit/openlit) for LLM observability.
 2. Openlit SDK forwards collected telemetry to OpenTelemetry collector via HTTP.
 3. OpenTelemetry collector performs basic transofrmations, tail sampling, etc. and forwards telemetry to VictoriaStack.
@@ -20,11 +20,11 @@ The demo consists of the following components:
    - VictoriaLogs for logs
    - VictoriaTraces for traces
 5. Grafana provisioned with:
-   - [datasources for metrics, logs and traces](https://github.com/hagen1778/ai-observability/tree/main/provisioning/datasources)
-   - [dashboard for AI observability](https://github.com/hagen1778/ai-observability/blob/main/provisioning/dashboards/openlit-demo.json)
-6. vmalert for running basic [alerting and recording rules](https://github.com/hagen1778/ai-observability/blob/main/rules/llm.yml) against VictoriaMetrics.
+   - [datasources for metrics, logs and traces](https://github.com/VictoriaMetrics/ai-observability/tree/main/provisioning/datasources)
+   - [dashboard for AI observability](https://github.com/VictoriaMetrics/ai-observability/blob/main/provisioning/dashboards/openlit-demo.json)
+6. vmalert for running basic [alerting and recording rules](https://github.com/VictoriaMetrics/ai-observability/blob/main/rules/llm.yml) against VictoriaMetrics.
 
-See the [compose.yml](https://github.com/hagen1778/ai-observability/blob/main/compose.yml) for the full list of services.
+See the [compose.yml](https://github.com/VictoriaMetrics/ai-observability/blob/main/compose.yml) for the full list of services.
 
 ## Quickstart
 
@@ -58,7 +58,7 @@ The joke "What kind of dinosaur loves to sleep? A stega-snore-us." is funny beca
 Application runs constantly, spending tokens and emitting telemetry. **Press Ctrl+C to stop it.**
 
 After a few minutes the application was running, it should have emitted telemetry to VictoriaStack.
-Open the Grafana and navigate to the [provisioned dashboard](https://github.com/hagen1778/ai-observability/blob/main/provisioning/dashboards/openlit-demo.json):
+Open the Grafana and navigate to the [provisioned dashboard](https://github.com/VictoriaMetrics/ai-observability/blob/main/provisioning/dashboards/openlit-demo.json):
 ![img.png](images/grafana-metrics.png)
 
 ![img.png](images/grafana-logs.png)
